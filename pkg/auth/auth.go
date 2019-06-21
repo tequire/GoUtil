@@ -82,7 +82,7 @@ func SetVerifier(v *oidc.IDTokenVerifier) {
 
 func init() {
 	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, "https://identity.gethighered.global")
+	provider, err := oidc.NewProvider(ctx, "http://identity.gethighered.global")
 	if err != nil {
 		panic(err.Error())
 	}
