@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/coreos/go-oidc"
@@ -73,7 +74,18 @@ func IsAuthorized(policies ...Policy) gin.HandlerFunc {
 	}
 }
 
-// InitVerifier initializes the token verifier. Is essential for IsAuthorized to work.
-func InitVerifier(v *oidc.IDTokenVerifier) {
+// SetVerifier sets the token verifier.
+func SetVerifier(v *oidc.IDTokenVerifier) {
 	verifier = v
+}
+
+func init() {
+	ctx := context.Background()
+	provider, err := oidc.NewProvider(ctx, "https://identity.gethighered.global")
+	if err != nil {
+		panic(err.Error())
+	}
+	verifier = provider.Verifier(&oidc.Config{
+		ClientID: "UserAPI",
+	})
 }

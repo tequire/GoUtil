@@ -8,3 +8,8 @@ import (
 func UserAccessPolicy(token *oidc.IDToken) bool {
 	return requireScope(token, "API_FULL_USER_ACCESS")
 }
+
+// AdminPolicy is a token policy that requires the role 'Admin'
+func AdminPolicy(token *oidc.IDToken) bool {
+	return requireRole(token, "Admin")
+}
