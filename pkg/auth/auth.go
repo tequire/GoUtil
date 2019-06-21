@@ -71,6 +71,7 @@ func IsAuthorized(policies ...Policy) gin.HandlerFunc {
 			ctx.JSON(403, gin.H{})
 		}
 		ctx.Set(UserInContext, user)
+		ctx.Set(TokenInContext, token)
 	}
 }
 
