@@ -7,6 +7,7 @@ import (
 	"github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/tequire/GoUtil/pkg/env"
 	"strings"
 )
 
@@ -80,13 +81,25 @@ func SetVerifier(v *oidc.IDTokenVerifier) {
 	verifier = v
 }
 
-func init() {
+func initDefaultVerifier() {
+	// Initialize authorityUrl
+	authorityURL := "https://identity-dev.highered.global" // Dev authority
+
+	// Check if in production
+	if env.IsProduction() {
+		authorityURL = "https://identity.highered.global"
+	}
+
 	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, "http://identity.gethighered.global")
+	provider, err := oidc.NewProvider(ctx, authorityURL)
 	if err != nil {
 		panic(err.Error())
 	}
 	verifier = provider.Verifier(&oidc.Config{
 		ClientID: "UserAPI",
 	})
+}
+
+func init() {
+	initDefaultVerifier()
 }
