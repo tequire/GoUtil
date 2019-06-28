@@ -22,6 +22,7 @@ var CTX context.Context
 // VerifierConfig defines a config of creating a oidc.IDTokenVerifier
 type VerifierConfig struct {
 	Authority string
+	Audience  *string
 }
 
 // VerifyAuthToken converts a raw Authorization header to a verified token
@@ -95,7 +96,14 @@ func NewVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
 	if err != nil {
 		panic(err.Error())
 	}
-	return provider.Verifier(&oidc.Config{})
+	audience := ""
+	if config.Audience != nil {
+		audience = *config.Audience
+	}
+	return provider.Verifier(&oidc.Config{
+		ClientID:          audience,
+		SkipClientIDCheck: config.Audience == nil,
+	})
 }
 
 func init() {
