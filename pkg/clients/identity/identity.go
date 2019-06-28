@@ -1,12 +1,14 @@
 package identity
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strconv"
+	"strings"
 
 	"github.com/tequire/GoUtil/pkg/config"
 )
@@ -37,25 +39,27 @@ func getIdentityServerURL(isProd bool) string {
 func GetAccessToken(config *TokenConfig) (*Token, error) {
 	identityURL := getIdentityServerURL(config.IsProd)
 
-	body, err := json.Marshal(map[string]string{
-		"client_id":     config.ClientID,
-		"client_secret": config.ClientSecret,
-		"grant_type":    "client_credentials",
-		"scope":         config.Scope,
-	})
-	if err != nil {
-		return nil, err
+	data := url.Values{
+		"client_id":     []string{config.ClientID},
+		"client_secret": []string{config.ClientSecret},
+		"grant_type":    []string{"client_credentials"},
+		"scope":         []string{config.Scope},
 	}
 
 	// Send token request
-	resp, err := http.Post(fmt.Sprintf("%s/connect/token", identityURL), "application/x-www-form-urlencoded", bytes.NewBuffer(body))
+	encodedData := data.Encode()
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/connect/token", identityURL), strings.NewReader(encodedData))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(encodedData)))
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
 	// Read and parse body
 	defer resp.Body.Close()
-	body, err = ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
