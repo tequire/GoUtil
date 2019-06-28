@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/tequire/GoUtil/pkg/config"
+
 	"github.com/tequire/GoUtil/pkg/env"
 
 	"github.com/coreos/go-oidc"
@@ -65,7 +67,7 @@ func Authorized(ctx context.Context, authHeader string, verifier *oidc.IDTokenVe
 
 // SetVerifier sets the token verifier.
 func SetVerifier(config *VerifierConfig) {
-	tokenVerifier = createVerifier(config)
+	tokenVerifier = NewVerifier(config)
 }
 
 // Verifier gets the current oidc.IDTokenVerifier
@@ -73,22 +75,22 @@ func Verifier() *oidc.IDTokenVerifier {
 	return tokenVerifier
 }
 
-// DevTokenVerifierConfig returns the IDToken-config for dev
-func DevTokenVerifierConfig() *VerifierConfig {
-	return &VerifierConfig{
-		Authority: "https://identity-dev.highered.global",
-	}
+// NewDevVerifier returns a token-verifier for dev
+func NewDevVerifier() *oidc.IDTokenVerifier {
+	return NewVerifier(&VerifierConfig{
+		Authority: config.DevIdentityServer,
+	})
 }
 
-// ProdTokenVerifierConfig returns the IDToken-config for dev
-func ProdTokenVerifierConfig() *VerifierConfig {
-	return &VerifierConfig{
-		Authority: "https://identity.highered.global",
-	}
+// NewProdVerifier returns a token-verifier for prod
+func NewProdVerifier() *oidc.IDTokenVerifier {
+	return NewVerifier(&VerifierConfig{
+		Authority: config.ProdIdentityServer,
+	})
 }
 
-func createVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
-
+// NewVerifier creates a new token-verifier based on a config
+func NewVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
 	provider, err := oidc.NewProvider(CTX, config.Authority)
 	if err != nil {
 		panic(err.Error())
@@ -99,12 +101,12 @@ func createVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
 }
 
 func init() {
-	CTX = context.Background()
+	CTX = context.Background() // Sets the global context
 
-	verifierConfig := DevTokenVerifierConfig()
+	// Decide which verifier-config used based on environment
+	verifier := NewDevVerifier()
 	if env.IsProduction() {
-		verifierConfig = ProdTokenVerifierConfig()
+		verifier = NewProdVerifier()
 	}
-
-	SetVerifier(verifierConfig)
+	tokenVerifier = verifier // Set the global token-verifier
 }
