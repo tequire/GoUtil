@@ -3,6 +3,7 @@ package identity
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -57,6 +58,9 @@ func GetAccessToken(config *TokenConfig) (*Token, error) {
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode >= 400 {
+		return nil, errors.New(string(body))
 	}
 	tokens := &Token{}
 	err = json.Unmarshal(body, tokens)
