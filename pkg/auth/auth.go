@@ -3,23 +3,27 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
-	"github.com/coreos/go-oidc"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/tequire/GoUtil/pkg/env"
+	"net/http"
 	"strings"
+
+	"github.com/tequire/GoUtil/pkg/env"
+
+	"github.com/coreos/go-oidc"
 )
 
-var verifier *oidc.IDTokenVerifier
+// TokenVerifier is the current token verifier
+var tokenVerifier *oidc.IDTokenVerifier
 
-// User represents a user from the token.
-type User struct {
-	ID *uuid.UUID `json:"id"`
+// CTX is the authorization context
+var CTX context.Context
+
+// VerifierConfig defines a config of creating a oidc.IDTokenVerifier
+type VerifierConfig struct {
+	Authority string
 }
 
-func authorize(ctx *gin.Context) (*oidc.IDToken, error) {
-	header := ctx.GetHeader("Authorization")
+// VerifyAuthToken converts a raw Authorization header to a verified token
+func VerifyAuthToken(ctx context.Context, header string, verifier *oidc.IDTokenVerifier) (*oidc.IDToken, error) {
 	parts := strings.Split(header, " ")
 	if len(parts) != 2 {
 		return nil, errors.New("invalid authorization header")
@@ -27,79 +31,80 @@ func authorize(ctx *gin.Context) (*oidc.IDToken, error) {
 	return verifier.Verify(ctx, parts[1])
 }
 
-func tokenToUser(token *oidc.IDToken) (*User, error) {
-	if token == nil {
-		return nil, fmt.Errorf("Token is nil")
-	}
+// IsAuthorized checks wether a user is authorized.
+func IsAuthorized(policies ...Policy) func(http.ResponseWriter, *http.Request) {
 
-	id, err := uuid.Parse(token.Subject)
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Validate token
+		authHeader := r.Header.Get("Authorization")
+		_, err := Authorized(CTX, authHeader, tokenVerifier, policies...)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+	}
+}
+
+// Authorized valides an authorization header's token and validies it's policies
+func Authorized(ctx context.Context, authHeader string, verifier *oidc.IDTokenVerifier, policies ...Policy) (*oidc.IDToken, error) {
+	// Validate token
+	token, err := VerifyAuthToken(ctx, authHeader, verifier)
 	if err != nil {
 		return nil, err
 	}
-	user := User{
-		ID: &id,
+
+	// Validate policies
+	for _, policy := range policies {
+		if valid := policy(token); !valid {
+			return nil, errors.New("unauthorized")
+		}
 	}
-	return &user, nil
-}
 
-// IsAuthorized checks wether a user is authorized.
-func IsAuthorized(policies ...Policy) gin.HandlerFunc {
-
-	return func(ctx *gin.Context) {
-		// Validate token
-		token, err := authorize(ctx)
-		if err != nil {
-			fmt.Println(err.Error())
-			ctx.Abort()
-			ctx.JSON(403, gin.H{})
-			return
-		}
-
-		// Validate policies
-		for _, policy := range policies {
-			if valid := policy(token); !valid {
-				ctx.Abort()
-				ctx.JSON(403, gin.H{})
-				return
-			}
-		}
-
-		// Get user from token
-		user, err := tokenToUser(token)
-		if err != nil {
-			fmt.Println(err.Error())
-			ctx.Abort()
-			ctx.JSON(403, gin.H{})
-		}
-		ctx.Set(UserInContext, user)
-		ctx.Set(TokenInContext, token)
-	}
+	return token, nil
 }
 
 // SetVerifier sets the token verifier.
-func SetVerifier(v *oidc.IDTokenVerifier) {
-	verifier = v
+func SetVerifier(config *VerifierConfig) {
+	tokenVerifier = createVerifier(config)
 }
 
-func initDefaultVerifier() {
-	// Initialize authorityUrl
-	authorityURL := "https://identity-dev.highered.global" // Dev authority
+// Verifier gets the current oidc.IDTokenVerifier
+func Verifier() *oidc.IDTokenVerifier {
+	return tokenVerifier
+}
 
-	// Check if in production
-	if env.IsProduction() {
-		authorityURL = "https://identity.highered.global"
+// DevTokenVerifierConfig returns the IDToken-config for dev
+func DevTokenVerifierConfig() *VerifierConfig {
+	return &VerifierConfig{
+		Authority: "https://identity-dev.highered.global",
 	}
+}
 
-	ctx := context.Background()
-	provider, err := oidc.NewProvider(ctx, authorityURL)
+// ProdTokenVerifierConfig returns the IDToken-config for dev
+func ProdTokenVerifierConfig() *VerifierConfig {
+	return &VerifierConfig{
+		Authority: "https://identity.highered.global",
+	}
+}
+
+func createVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
+
+	provider, err := oidc.NewProvider(CTX, config.Authority)
 	if err != nil {
 		panic(err.Error())
 	}
-	verifier = provider.Verifier(&oidc.Config{
+	return provider.Verifier(&oidc.Config{
 		ClientID: "UserAPI",
 	})
 }
 
 func init() {
-	initDefaultVerifier()
+	CTX = context.Background()
+
+	verifierConfig := DevTokenVerifierConfig()
+	if env.IsProduction() {
+		verifierConfig = ProdTokenVerifierConfig()
+	}
+
+	SetVerifier(verifierConfig)
 }

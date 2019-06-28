@@ -1,7 +1,8 @@
-package auth
+package gin
 
 import (
 	"errors"
+
 	"github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

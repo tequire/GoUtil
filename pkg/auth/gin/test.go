@@ -1,4 +1,4 @@
-package auth
+package gin
 
 import (
 	"github.com/google/uuid"
@@ -22,4 +22,3 @@ func KnownTestUser2() User {
 	id := uuid.MustParse("b368f083-6674-48f6-8576-1fcb3600d82e")
 	return User{ID: &id}
 }
-
