@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"net/http"
 	"strings"
 
 	"github.com/tequire/GoUtil/pkg/config"
@@ -32,20 +31,6 @@ func VerifyAuthToken(ctx context.Context, header string, verifier *oidc.IDTokenV
 		return nil, errors.New("invalid authorization header")
 	}
 	return verifier.Verify(ctx, parts[1])
-}
-
-// IsAuthorized checks wether a user is authorized.
-func IsAuthorized(policies ...Policy) func(http.ResponseWriter, *http.Request) {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Validate token
-		authHeader := r.Header.Get("Authorization")
-		_, err := Authorized(CTX, authHeader, tokenVerifier, policies...)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-	}
 }
 
 // Authorized valides an authorization header's token and validies it's policies

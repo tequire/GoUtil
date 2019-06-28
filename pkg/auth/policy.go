@@ -43,8 +43,20 @@ func requireRole(token *oidc.IDToken, roles ...string) bool {
 
 	// Put roles in map
 	roleMap := map[string]bool{}
-	for _, role := range readRoles.Roles {
-		roleMap[role] = true
+	if readRoles.Roles != nil && len(readRoles.Roles) > 0 {
+		// If was able to parse array, add roles into map
+		for _, role := range readRoles.Roles {
+			roleMap[role] = true
+		}
+	} else {
+		// If the role-claim was not an array, try to parse as string
+		var roleType struct {
+			Role string `json:"role"`
+		}
+		token.Claims(&roleType)
+		if roleType.Role != "" {
+			roleMap[roleType.Role] = true
+		}
 	}
 
 	// Check required scopes
