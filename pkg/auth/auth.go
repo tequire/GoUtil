@@ -95,9 +95,7 @@ func NewVerifier(config *VerifierConfig) *oidc.IDTokenVerifier {
 	if err != nil {
 		panic(err.Error())
 	}
-	return provider.Verifier(&oidc.Config{
-		ClientID: "UserAPI",
-	})
+	return provider.Verifier(&oidc.Config{})
 }
 
 func init() {
