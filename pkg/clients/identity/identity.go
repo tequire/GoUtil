@@ -48,7 +48,7 @@ func GetAccessToken(config *TokenConfig) (*Token, error) {
 	}
 
 	// Send token request
-	resp, err := http.Post(fmt.Sprintf("%s/connect/token", identityURL), "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post(fmt.Sprintf("%s/connect/token", identityURL), "application/x-www-form-urlencoded", bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}
