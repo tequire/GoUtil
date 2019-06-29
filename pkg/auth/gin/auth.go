@@ -5,6 +5,7 @@ import (
 
 	"github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/tequire/GoUtil/pkg/auth"
 )
 
@@ -14,11 +15,11 @@ type User struct {
 }
 
 // IsAuthorized checks wether a user is authorized.
-func IsAuthorized(policies ...Policy) gin.HandlerFunc {
+func IsAuthorized(policies ...auth.Policy) gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 		header := ctx.GetHeader("Authorization")
-		err := auth.Authorize(ctx, header, auth.Verifer(), policies...)
+		token, err := auth.Authorized(ctx, header, auth.Verifier(), policies...)
 		if err != nil {
 			fmt.Println(err.Error())
 			ctx.Abort()

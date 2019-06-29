@@ -6,6 +6,7 @@ import (
 	"github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/tequire/GoUtil/pkg/auth"
 )
 
 // UserInContext is a const for user reference in context
@@ -45,5 +46,5 @@ func IsAdminOrAuthorized(ctx *gin.Context, ownerUUID uuid.UUID, resourceUUID uui
 	if !ok {
 		return false
 	}
-	return AdminPolicy(token)
+	return auth.AdminPolicy(token)
 }
