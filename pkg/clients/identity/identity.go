@@ -24,6 +24,7 @@ type TokenConfig struct {
 	ClientID     string
 	ClientSecret string
 	Scope        string
+	GrantType    string
 	IsProd       bool
 }
 
@@ -39,10 +40,14 @@ func getIdentityServerURL(isProd bool) string {
 func GetAccessToken(config *TokenConfig) (*Token, error) {
 	identityURL := getIdentityServerURL(config.IsProd)
 
+	if config.GrantType == "" {
+		config.GrantType = "client_credentials"
+	}
+
 	data := url.Values{
 		"client_id":     []string{config.ClientID},
 		"client_secret": []string{config.ClientSecret},
-		"grant_type":    []string{"client_credentials"},
+		"grant_type":    []string{config.GrantType},
 		"scope":         []string{config.Scope},
 	}
 
