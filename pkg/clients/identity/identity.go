@@ -13,6 +13,21 @@ import (
 	"github.com/tequire/GoUtil/pkg/config"
 )
 
+// GrantType describes a oauth grant type
+type GrantType string
+
+// ClientCredentials is the 'client_credentials' grant type
+const ClientCredentials GrantType = "client_credentials"
+
+// ResourceOwnerPassword is the 'password' grant type
+const ResourceOwnerPassword GrantType = "password"
+
+// RefreshToken is the 'refresh_token' grant type
+const RefreshToken GrantType = "refresh_token"
+
+// AuthorizationCode is the 'authorization_code' grant type
+const AuthorizationCode GrantType = "authorization_code"
+
 // Token holds the accessToken and the refreshToken
 type Token struct {
 	AccessToken  string `json:"access_token"`
@@ -23,8 +38,12 @@ type Token struct {
 type TokenConfig struct {
 	ClientID     string
 	ClientSecret string
+	Password     string
+	Username     string
+	RefreshToken string
+	Code         string
 	Scope        string
-	GrantType    string
+	GrantType    GrantType
 	IsProd       bool
 }
 
@@ -40,15 +59,17 @@ func getIdentityServerURL(isProd bool) string {
 func GetAccessToken(config *TokenConfig) (*Token, error) {
 	identityURL := getIdentityServerURL(config.IsProd)
 
-	if config.GrantType == "" {
-		config.GrantType = "client_credentials"
-	}
-
-	data := url.Values{
-		"client_id":     []string{config.ClientID},
-		"client_secret": []string{config.ClientSecret},
-		"grant_type":    []string{config.GrantType},
-		"scope":         []string{config.Scope},
+	var data url.Values
+	if config.GrantType == "" || config.GrantType == ClientCredentials {
+		data = newClientCredPayload(config)
+	} else if config.GrantType == ResourceOwnerPassword {
+		data = newPasswordPayload(config)
+	} else if config.GrantType == AuthorizationCode {
+		data = newAuthCodePayload(config)
+	} else if config.GrantType == RefreshToken {
+		data = newRefreshPayload(config)
+	} else {
+		return nil, errors.New("Invalid grant type")
 	}
 
 	// Send token request
@@ -78,4 +99,43 @@ func GetAccessToken(config *TokenConfig) (*Token, error) {
 	}
 
 	return tokens, nil
+}
+
+func newClientCredPayload(config *TokenConfig) url.Values {
+	return url.Values{
+		"client_id":     []string{config.ClientID},
+		"client_secret": []string{config.ClientSecret},
+		"grant_type":    []string{string(ClientCredentials)},
+		"scope":         []string{config.Scope},
+	}
+}
+
+func newPasswordPayload(config *TokenConfig) url.Values {
+	return url.Values{
+		"client_id":  []string{config.ClientID},
+		"username":   []string{config.Username},
+		"password":   []string{config.Password},
+		"grant_type": []string{string(ResourceOwnerPassword)},
+		"scope":      []string{config.Scope},
+	}
+}
+
+func newAuthCodePayload(config *TokenConfig) url.Values {
+	return url.Values{
+		"client_id":     []string{config.ClientID},
+		"client_secret": []string{config.ClientSecret},
+		"code":          []string{config.Code},
+		"grant_type":    []string{string(AuthorizationCode)},
+		"scope":         []string{config.Scope},
+	}
+}
+
+func newRefreshPayload(config *TokenConfig) url.Values {
+	return url.Values{
+		"client_id":     []string{config.ClientID},
+		"client_secret": []string{config.ClientSecret},
+		"refresh_token": []string{config.RefreshToken},
+		"grant_type":    []string{string(RefreshToken)},
+		"scope":         []string{config.Scope},
+	}
 }
