@@ -29,6 +29,20 @@ func GetUser(ctx *gin.Context) (*User, error) {
 	return &User{ID: &id}, nil
 }
 
+// GetClaim gets the claim by name that is inside a token stored in the gin.Context
+func GetToken(ctx *gin.Context, name string) (*oidc.IDToken, error) {
+	// Get token
+	tokenInterface, exists := ctx.Get(TokenInContext)
+	if !exists {
+		return nil, errors.New("token missing in context")
+	}
+	token, ok := tokenInterface.(*oidc.IDToken)
+	if !ok {
+		return nil, errors.New("invalid token object")
+	}
+	return token
+}
+
 // IsAdminOrAuthorized checks if the user is authorized to a resource or has admin privilages
 func IsAdminOrAuthorized(ctx *gin.Context, ownerUUID uuid.UUID, resourceUUID uuid.UUID) bool {
 	// Check if resource is authorized

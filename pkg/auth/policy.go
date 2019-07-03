@@ -59,7 +59,7 @@ func requireRole(token *oidc.IDToken, roles ...string) bool {
 		}
 	}
 
-	// Check required scopes
+	// Check required roles
 	for _, role := range roles {
 		if _, ok := roleMap[role]; !ok {
 			return false
