@@ -29,12 +29,18 @@ func GetUser(ctx *gin.Context) (*User, error) {
 	return &User{ID: &id}, nil
 }
 
-// GetClaim gets the claim by name that is inside a token stored in the gin.Context
+// GetToken gets the token from the request
 func GetToken(ctx *gin.Context, name string) (*oidc.IDToken, error) {
 	// Get token
 	tokenInterface, exists := ctx.Get(TokenInContext)
 	if !exists {
-		return nil, errors.New("token missing in context")
+		// Try to get token from header
+		header := ctx.GetHeader("Authorization")
+		token, err := auth.Authorized(ctx, header, auth.Verifier())
+		if err != nil {
+			return nil, errors.New("token missing in context")
+		}
+		return token, nil
 	}
 	token, ok := tokenInterface.(*oidc.IDToken)
 	if !ok {
