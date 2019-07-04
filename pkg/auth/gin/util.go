@@ -40,7 +40,7 @@ func GetToken(ctx *gin.Context, name string) (*oidc.IDToken, error) {
 	if !ok {
 		return nil, errors.New("invalid token object")
 	}
-	return token
+	return token, nil
 }
 
 // IsAdminOrAuthorized checks if the user is authorized to a resource or has admin privilages
