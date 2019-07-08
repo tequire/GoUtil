@@ -1,4 +1,4 @@
-package organization
+package jobads
 
 import (
 	"encoding/json"

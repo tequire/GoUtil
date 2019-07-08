@@ -1,4 +1,4 @@
-package organization
+package jobads
 
 // Organization defines an organization
 type Organization struct {
