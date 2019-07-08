@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/tequire/GoUtil/pkg/clients"
 	"github.com/tequire/GoUtil/pkg/config"
+	"github.com/tequire/GoUtil/pkg/http"
 )
 
 // Client to access the organization API
@@ -91,8 +91,8 @@ func (c *Client) GetOrgSettingByDomain(domain string) (*OrganizationSetting, err
 	return &setting, nil
 }
 
-func handleGet(client *Client, endpoint string) (*clients.HTTPResult, error) {
-	result, err := clients.Get(&clients.HTTPConfig{
+func handleGet(client *Client, endpoint string) (*http.HTTPResult, error) {
+	result, err := http.Get(&http.HTTPConfig{
 		URL:   fmt.Sprintf("%s/%s", getAPIURL(client.isProd), endpoint),
 		Token: client.token,
 	})
