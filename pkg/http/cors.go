@@ -2,7 +2,7 @@ package http
 
 import "net/http"
 
-func cors(w http.ResponseWriter, r *http.Request) bool {
+func Cors(w http.ResponseWriter, r *http.Request) bool {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	if r.Method == "OPTIONS" {
