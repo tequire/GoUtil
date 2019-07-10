@@ -50,7 +50,8 @@ func GetToken(ctx *gin.Context, name string) (*oidc.IDToken, error) {
 }
 
 // IsAdminOrAuthorized checks if the user is authorized to a resource or has admin privileges
-func IsAdminOrAuthorized(ctx *gin.Context, ownerUUID uuid.UUID, resourceUUID uuid.UUID) bool {
+func IsAdminOrAuthorized(ctx *gin.Context, ownerUUID *uuid.UUID, resourceUUID *uuid.UUID) bool {
+
 	// Check if resource is authorized
 	authorized := ownerUUID.String() == resourceUUID.String()
 	if authorized {
@@ -70,7 +71,7 @@ func IsAdminOrAuthorized(ctx *gin.Context, ownerUUID uuid.UUID, resourceUUID uui
 }
 
 // IsAdminOrEmployeeOrAuthorized checks if the user is authorized to a resource or has admin or employee privileges
-func IsAdminOrEmployeeOrAuthorized(ctx *gin.Context, ownerUUID uuid.UUID, resourceUUID uuid.UUID) bool {
+func IsAdminOrEmployeeOrAuthorized(ctx *gin.Context, ownerUUID *uuid.UUID, resourceUUID *uuid.UUID) bool {
 	// Check if resource is authorized
 	authorized := ownerUUID.String() == resourceUUID.String()
 	if authorized {
