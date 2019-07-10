@@ -91,6 +91,22 @@ func (c *Client) GetOrgSettingByDomain(domain string) (*OrganizationSetting, err
 	return &setting, nil
 }
 
+// GetSchools gets all the schools - api/v2/organizations/category/1
+func (c *Client) GetSchools() ([]*Organization, error) {
+	result, err := handleGet(c, "api/v2/organizations/category/1")
+	if err != nil {
+		return nil, err
+	}
+
+	var schools []*Organization
+	err = json.Unmarshal(result.Body, &schools)
+	if err != nil {
+		return nil, err
+	}
+
+	return schools, nil
+}
+
 func handleGet(client *Client, endpoint string) (*http.HTTPResult, error) {
 	result, err := http.Get(&http.HTTPConfig{
 		URL:   fmt.Sprintf("%s/%s", getAPIURL(client.isProd), endpoint),
