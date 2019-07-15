@@ -29,7 +29,7 @@ func (c *Client) SetProd(isProd bool) {
 
 // GetOrganizations gets the organizations at /api/v2/organizations
 func (c *Client) GetOrganizations() ([]*Organization, error) {
-	result, err := handleGet(c, "api/v2/organizations")
+	result, err := handleGet(c, "api/v2/organizations/")
 	if err != nil {
 		return nil, err
 	}
@@ -41,6 +41,22 @@ func (c *Client) GetOrganizations() ([]*Organization, error) {
 	}
 
 	return organizations, nil
+}
+
+// GetCompanies gets all companies
+func (c *Client) GetCompanies() ([]*Organization, error) {
+	result, err := handleGet(c, "api/v2/organizations/category/2")
+	if err != nil {
+		return nil, err
+	}
+
+	var companies []*Organization
+	err = json.Unmarshal(result.Body, &companies)
+	if err != nil {
+		return nil, err
+	}
+
+	return companies, nil
 }
 
 // GetOrganizationSettings gets the settings for all organizations

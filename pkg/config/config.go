@@ -11,3 +11,9 @@ const DevJobAdsAPI = "https://highered-identity-jobad-dev.azurewebsites.net"
 
 // ProdJobAdsAPI is the URL for the prod JobAdsAPI
 const ProdJobAdsAPI = "https://highered-jobadsapi-identity-prod.azurewebsites.net"
+
+// DevHigheredAPI is the URL for the dev GetHighered-API
+const DevHigheredAPI = "https://api.gethighered-dev.global"
+
+// ProdHigheredAPI is the URL for the prod GetHighered-API
+const ProdHigheredAPI = "https://api.gethighered.global"

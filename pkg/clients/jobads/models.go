@@ -40,6 +40,7 @@ type OrganizationSetting struct {
 	SubDomain      string `json:"subDomain"`
 }
 
+// Job is a jobAd
 type Job struct {
 	JobAdID             int       `json:"jobAdId"`
 	ID                  int       `json:"id"`
@@ -81,16 +82,19 @@ type Job struct {
 	Schools             []School  `json:"schools"`
 }
 
+// Country defines a country
 type Country struct {
 	ID   string
 	Text string
 }
 
+// School defines a school by id and name
 type School struct {
 	ID   string
 	Text string
 }
 
+// Time defines a ISO-datetime and supports empty strings
 type Time struct {
 	time.Time
 }
@@ -112,4 +116,38 @@ func (t *Time) UnmarshalJSON(b []byte) error {
 		*t = Time{timestamp}
 	}
 	return nil
+}
+
+// Article defines an article
+type Article struct {
+	ID              string    `json:"id"`
+	Title           string    `json:"title"`
+	Ingress         string    `json:"ingress"`
+	FeaturedImage   string    `json:"featuredImage"`
+	Slug            string    `json:"slug"`
+	Tags            []Tag     `json:"tags"`
+	OrganizationIds []int     `json:"organizationIds"`
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
+}
+
+// Video defines a video
+type Video struct {
+	ID              string    `json:"id"`
+	VideoLink       string    `json:"videoLink"`
+	Thumbnail       string    `json:"thumbnail,omitempty"`
+	Title           string    `json:"title"`
+	Description     string    `json:"description"`
+	OrganizationIds []int     `json:"organizationIds"`
+	Tags            []Tag     `json:"tags"`
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
+}
+
+// Tag defines a tag
+type Tag struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
