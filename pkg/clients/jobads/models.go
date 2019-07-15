@@ -1,5 +1,13 @@
 package jobads
 
+import (
+	"fmt"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/google/uuid"
+)
+
 // Organization defines an organization
 type Organization struct {
 	ID                    int       `json:"id"`
@@ -30,4 +38,78 @@ type OrganizationSetting struct {
 	LogoURL        string `json:"logoUrl"`
 	Domains        string `json:"domains"`
 	SubDomain      string `json:"subDomain"`
+}
+
+type Job struct {
+	JobAdID             int       `json:"jobAdId"`
+	ID                  int       `json:"id"`
+	OwnerOrganizationID uuid.UUID `json:"ownerOrganizationId"`
+	CompanyID           int       `json:"companyId"`
+	CompanyName         string    `json:"companyName"`
+	JobTitle            string    `json:"jobTitle"`
+	NumberOfVacancies   int       `json:"numberOfVacancies"`
+	ApplicationDeadline *Time     `json:"applicationDeadline"`
+	JobDescription      string    `json:"jobDescription"`
+	TaskDescription     string    `json:"taskDescription"`
+	OfferDescription    string    `json:"offerDescription"`
+	ApplicationLink     string    `json:"applicationLink"`
+	EmploymentLevel     int       `json:"employmentLevel"`
+	EmploymentStartDate *Time     `json:"employmentStartDate"`
+	EmploymentEndDate   *Time     `json:"employmentEndDate"`
+	PublishDate         *Time     `json:"publishDate"`
+	PublishEndDate      *Time     `json:"publishEndDate"`
+	Qualifications      string    `json:"qualifications"`
+	PersonalQualities   string    `json:"personalQuailites"`
+	StreetAddress       string    `json:"streetAdress"`
+	ZipCode             string    `json:"zipCode"`
+	PostalAddress       string    `json:"postalAddress"`
+	Latitude            float32   `json:"latitude"`
+	Longitude           float32   `json:"longitude"`
+	CountryList         []Country `json:"country"`
+	CountryID           int       `json:"countryId"`
+	ReferenceNumber     string    `json:"referenceNumber"`
+	Visibility          string    `json:"visibility"`
+	PaymentRole         string    `json:"paymentRole"`
+	JobAdState          int       `json:"jobAdState"`
+	EducationFields     []string  `json:"educationFields"`
+	Departments         []string  `json:"departments"`
+	EducationLevels     []string  `json:"educationLevels"`
+	EmploymentTypes     []string  `json:"employmentTypes"`
+	Languages           []string  `json:"languages"`
+	Locations           []string  `json:"locations"`
+	Sectors             []string  `json:"sectors"`
+	Schools             []School  `json:"schools"`
+}
+
+type Country struct {
+	ID   string
+	Text string
+}
+
+type School struct {
+	ID   string
+	Text string
+}
+
+type Time struct {
+	time.Time
+}
+
+// ToString converts to time...
+func (t *Time) String() string {
+	ts, err := ptypes.TimestampProto(t.Time)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return ptypes.TimestampString(ts)
+}
+
+// UnmarshalJSON returns time.Now() no matter what!
+func (t *Time) UnmarshalJSON(b []byte) error {
+	// Mon Jan 2 15:04:05 -0700 MST 2006
+	timestamp, err := time.Parse("\"2006-01-02T15:04:05\"", string(b))
+	if err == nil {
+		*t = Time{timestamp}
+	}
+	return nil
 }
