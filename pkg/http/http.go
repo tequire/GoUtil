@@ -24,25 +24,25 @@ type HTTPResult struct {
 
 // Get returns a GET request
 func Get(config *HTTPConfig) (*HTTPResult, error) {
-	return handleRequest("GET", config)
+	return HandleRequest("GET", config)
 }
 
 // Post returns a POST request
 func Post(config *HTTPConfig) (*HTTPResult, error) {
-	return handleRequest("POST", config)
+	return HandleRequest("POST", config)
 }
 
 // Put returns a PUT request
 func Put(config *HTTPConfig) (*HTTPResult, error) {
-	return handleRequest("PUT", config)
+	return HandleRequest("PUT", config)
 }
 
 // Delete returns a DELETE request
 func Delete(config *HTTPConfig) (*HTTPResult, error) {
-	return handleRequest("DELETE", config)
+	return HandleRequest("DELETE", config)
 }
 
-func handleRequest(method string, config *HTTPConfig) (*HTTPResult, error) {
+func HandleRequest(method string, config *HTTPConfig) (*HTTPResult, error) {
 	client := &http.Client{}
 
 	// Prepare body
