@@ -8,7 +8,7 @@ type Client struct {
 	isProd bool
 }
 
-// New creates a new organization client
+// New creates a new candidate client
 func New(token string) *Client {
 	return &Client{
 		token:  token,
