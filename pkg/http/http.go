@@ -57,6 +57,7 @@ func HandleRequest(method string, config *HTTPConfig) (*HTTPResult, error) {
 
 	// Create request
 	req, err := http.NewRequest(method, config.URL, bytes.NewBuffer(reqBody))
+	req.Header.Add("Content-Type", "application/json")
 	if err != nil {
 		return nil, err
 	}
