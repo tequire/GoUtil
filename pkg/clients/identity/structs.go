@@ -2,41 +2,33 @@ package identity
 
 // BaseUserPost defines the request for CreateInactiveUser
 type BaseUserPost struct {
-	/* public string StudentEmail { get; set; }
-	public string FirstName { get; set; }
-	public string LastName { get; set; }
-	public string OldUserId { get; set; }
+	StudentEmail string `json:"studentEmail"`
+	FirstName    string `json:"firstName"`
+	LastName     string `json:"lastName"`
+	OldUserID    int    `json:"oldUserId"`
 
-	public string Nationality { get; set; }
-	public string Avatar { get; set; }
-	public int? PrimarySchool { get; set; }
-	public int? SchoolRegisteredAt { get; set; } */
+	Nationality        string `json:"nationality"`
+	Avatar             string `json:"avatar"`
+	PrimarySchool      *int   `json:"primarySchool,omitempty"`
+	SchoolRegisteredAt *int   `json:"schoolRegisteredAt,omitempty"`
 }
 
 // BaseVerifyPost defines the request for VerifySchool
 type BaseVerifyPost struct {
-	/* [Required]
-	public Guid UserId { get; set; }
-
-	[Required]
-	public int SchoolId { get; set; }
-
-	[Required]
-	public string StudentEmail { get; set; } */
+	UserID       string `json:"userId"`
+	SchoolID     int    `json:"schoolId"`
+	StudentEmail string `json:"studentEmail"`
 }
 
 // ActiveUserPost defines the request for ChangeAuthenticationMethod
 type ActiveUserPost struct {
-	/* [Required]
-	public string Token { get; set; }
+	Token string `json:"token"`
 
-	// Activate user with external token providers
-	public string Provider { get; set; }
-	public string AuthCode { get; set; }
-	public string RedirectUrl { get; set; }
+	Provider    string `json:"provider,omitempty"`
+	AuthCode    string `json:"authCode,omitempty"`
+	RedirectURL string `json:"redirectUrl,omitempty"`
 
-	// Activate user with email or password
-	public string Email { get; set; }
-	public string Password { get; set; }
-	public string EmailReturnUrl { get; set; } */
+	Email          string `json:"email,omitempty"`
+	Password       string `json:"password,omitempty"`
+	EmailReturnURL string `json:"emailReturnUrl,omitempty"`
 }
