@@ -75,20 +75,19 @@ func (c *Client) GetOrganizationSettings() ([]*OrganizationSetting, error) {
 	return settings, nil
 }
 
-// GetOrganizationByID gets an organization by id
-func (c *Client) GetOrganizationByID(ID int) (*Organization, error) {
-	result, err := handleGet(c, fmt.Sprintf("api/v2/organizations/%d", ID))
+// GetOrganizationSettingByID gets an organizationSetting by ID
+func (c *Client) GetOrganizationSettingByID(ID int) (*OrganizationSetting, error) {
+	result, err := handleGet(c, fmt.Sprintf("api/v1/organizationsprofile/%d", ID))
 	if err != nil {
 		return nil, err
 	}
 
-	var organization Organization
-	err = json.Unmarshal(result.Body, &organization)
+	setting := &OrganizationSetting{}
+	err = json.Unmarshal(result.Body, setting)
 	if err != nil {
 		return nil, err
 	}
-
-	return &organization, nil
+	return setting, nil
 }
 
 // GetOrgSettingByDomain returns an organization-setting by domain
@@ -105,6 +104,22 @@ func (c *Client) GetOrgSettingByDomain(domain string) (*OrganizationSetting, err
 	}
 
 	return &setting, nil
+}
+
+// GetOrganizationByID gets an organization by id
+func (c *Client) GetOrganizationByID(ID int) (*Organization, error) {
+	result, err := handleGet(c, fmt.Sprintf("api/v2/organizations/%d", ID))
+	if err != nil {
+		return nil, err
+	}
+
+	var organization Organization
+	err = json.Unmarshal(result.Body, &organization)
+	if err != nil {
+		return nil, err
+	}
+
+	return &organization, nil
 }
 
 // GetSchools gets all the schools - api/v2/organizations/category/1
