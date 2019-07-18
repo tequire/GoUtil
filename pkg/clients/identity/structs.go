@@ -6,6 +6,7 @@ type BaseUserPost struct {
 	FirstName    string `json:"firstName"`
 	LastName     string `json:"lastName"`
 	OldUserID    int    `json:"oldUserId"`
+	PhoneNumber  string `json:"phoneNumber"`
 
 	Nationality        string `json:"nationality"`
 	Avatar             string `json:"avatar"`
