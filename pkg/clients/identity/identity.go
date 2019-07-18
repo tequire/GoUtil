@@ -112,11 +112,12 @@ func newClientCredPayload(config *TokenConfig) url.Values {
 
 func newPasswordPayload(config *TokenConfig) url.Values {
 	return url.Values{
-		"client_id":  []string{config.ClientID},
-		"username":   []string{config.Username},
-		"password":   []string{config.Password},
-		"grant_type": []string{string(ResourceOwnerPassword)},
-		"scope":      []string{config.Scope},
+		"client_id":     []string{config.ClientID},
+		"client_secret": []string{config.ClientSecret},
+		"username":      []string{config.Username},
+		"password":      []string{config.Password},
+		"grant_type":    []string{string(ResourceOwnerPassword)},
+		"scope":         []string{config.Scope},
 	}
 }
 
