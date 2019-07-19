@@ -1,6 +1,9 @@
 package candidate
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Client to access the Candidate API
 type Client struct {
@@ -19,6 +22,22 @@ func New(token string) *Client {
 // SetProd sets if the client should request against the prod or dev environment
 func (c *Client) SetProd(isProd bool) {
 	c.isProd = isProd
+}
+
+// GetCandidateByUserID gets a candidate by ID
+func (c *Client) GetCandidateByUserID(userID string) (*Candidate, error) {
+	result, err := handleRequest(c, "GET", fmt.Sprintf("api/v1/candidate/retrieve/%s", userID), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	candidate := &Candidate{}
+	err = json.Unmarshal(result.Body, candidate)
+	if err != nil {
+		return nil, err
+	}
+	return candidate, nil
+
 }
 
 // CreateCandidate creates a candidate - requires an Admin-token
@@ -42,7 +61,7 @@ func (c *Client) CreateCandidate(userID string) (*Candidate, error) {
 	return candidate, nil
 }
 
-// CreateDegree creates a degree for a given candidate
+// CreateDegree creates a degree for a given candidate.
 // If 'candidateID' is nil, the degree will be assign the candidate with beloning userID in token
 func (c *Client) CreateDegree(candidateID *string, degree Degree) (*Degree, error) {
 	var reqBody struct {
@@ -86,4 +105,24 @@ func (c *Client) CreateLanguage(candidateID *string, lang LanguageCandidate) (*L
 		return nil, err
 	}
 	return resLang, nil
+}
+
+// DeleteLanguage deletes an existing language.
+func (c *Client) DeleteLanguage(langID string) error {
+	_, err := handleRequest(c, "DELETE", fmt.Sprintf("api/v1/candidate/language/%s", langID), nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteDegree deletes an existing degree.
+func (c *Client) DeleteDegree(degreeID string) error {
+	_, err := handleRequest(c, "DELETE", fmt.Sprintf("api/v1/candidate/degree/%s", degreeID), nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
