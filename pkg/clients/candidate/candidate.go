@@ -126,3 +126,12 @@ func (c *Client) DeleteDegree(degreeID string) error {
 
 	return nil
 }
+
+// DeleteCandidate deletes a candidate by id. For Admins only.
+func (c *Client) DeleteCandidate(candidateID string) error {
+	_, err := handleRequest(c, "DELETE", fmt.Sprintf("api/v1/candidate/me/%s", candidateID), nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
