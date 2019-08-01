@@ -68,13 +68,18 @@ func HandleRequest(method string, config *HTTPConfig) (*HTTPResult, error) {
 	resp, err := client.Do(req)
 	result := &HTTPResult{
 		Err:    err,
-		Status: resp.StatusCode,
+		Status: 500,
+	}
+	if resp != nil {
+		result.Status = resp.StatusCode
 	}
 
 	// Read body
-	body, err := ioutil.ReadAll(resp.Body)
-	if err == nil {
-		result.Body = body
+	if resp != nil {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err == nil {
+			result.Body = body
+		}
 	}
 
 	return result, nil
