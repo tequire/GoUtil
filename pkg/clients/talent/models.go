@@ -88,7 +88,7 @@ type PostalAddress struct {
 // CustomAttribute defines a custom attribute
 type CustomAttribute struct {
 	Filterable      bool     `json:"filterable,omitempty"`
-	LongValues      []int64  `json:"longValues,omitempty"`
+	LongValues      []string `json:"longValues,omitempty"`
 	StringValues    []string `json:"stringValues,omitempty"`
 	ForceSendFields []string `json:"-"`
 	NullFields      []string `json:"-"`
