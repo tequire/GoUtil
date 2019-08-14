@@ -138,21 +138,6 @@ func (c *Client) GetSchools() ([]*Organization, error) {
 	return schools, nil
 }
 
-// GetAllJobAds gets all the jobads
-func (c *Client) GetAllJobAds() ([]*Job, error) {
-	result, err := handleGet(c, "api/JobAds")
-	if err != nil {
-		return nil, err
-	}
-
-	var jobAds []*Job
-	err = json.Unmarshal(result.Body, &jobAds)
-	if err != nil {
-		return nil, err
-	}
-	return jobAds, nil
-}
-
 func handleGet(client *Client, endpoint string) (*http.HTTPResult, error) {
 	result, err := http.Get(&http.HTTPConfig{
 		URL:   fmt.Sprintf("%s/%s", getAPIURL(client.isProd), endpoint),
