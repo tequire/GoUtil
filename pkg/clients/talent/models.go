@@ -101,11 +101,11 @@ type JobView struct {
 	CreatedAt *time.Time `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
 
-	JobID   string `json:"jobId"`   // From JobAds
+	JobID   int    `json:"jobId"`   // From JobAds
 	JobName string `json:"jobName"` // From CTS
 
 	Title             string `json:"title"`
-	CompanyID         string `json:"companyId"`
+	CompanyID         int    `json:"companyId"`
 	CompanyLogo       string `json:"companyLogo"`
 	CompanyName       string `json:"companyName"`
 	PostingExpireTime string `json:"postingExpireTime"`
