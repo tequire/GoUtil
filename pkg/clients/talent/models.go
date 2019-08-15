@@ -98,16 +98,16 @@ type CustomAttribute struct {
 
 // JobView defines a jobView. It only contains the essential parts of a job
 type JobView struct {
-	CreatedAt *time.Time `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 
 	JobID   int    `json:"jobId"`   // From JobAds
 	JobName string `json:"jobName"` // From CTS
 
-	Title             string `json:"title"`
-	CompanyID         int    `json:"companyId"`
-	CompanyLogo       string `json:"companyLogo"`
-	CompanyName       string `json:"companyName"`
-	PostingExpireTime string `json:"postingExpireTime"`
-	Address           string `json:"address"`
+	Title             string `json:"title,omitempty"`
+	CompanyID         int    `json:"companyId,omitempty"`
+	CompanyLogo       string `json:"companyLogo,omitempty"`
+	CompanyName       string `json:"companyName,omitempty"`
+	PostingExpireTime string `json:"postingExpireTime,omitempty"`
+	Address           string `json:"address,omitempty"`
 }
