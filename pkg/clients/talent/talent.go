@@ -3,6 +3,7 @@ package talent
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/tequire/GoUtil/pkg/config"
 	"github.com/tequire/GoUtil/pkg/http"
@@ -37,6 +38,23 @@ func (c *Client) GetPostingByJobAdID(jobAdID int) (*Job, error) {
 		return nil, err
 	}
 	return job, nil
+}
+
+// GetJobViewsByIDS gets JobViews from the TalentAPI based on input JobAdIds
+func (c *Client) GetJobViewsByIDS(jobAdIds []string) ([]*JobView, error) {
+	var sb strings.Builder
+	for _, id := range jobAdIds {
+		sb.WriteString(fmt.Sprintf("id=%s&", id))
+	}
+
+	result, err := handleGet(c, fmt.Sprintf("api/v1/postings%s", sb.String()))
+	if err != nil {
+		return nil, err
+	}
+
+	var jobViews []*JobView
+	err = json.Unmarshal(result.Body, &jobViews)
+	return jobViews, err
 }
 
 func handleGet(client *Client, endpoint string) (*http.HTTPResult, error) {

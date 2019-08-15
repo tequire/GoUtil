@@ -1,5 +1,7 @@
 package talent
 
+import "time"
+
 // Job defines a job from CTS
 type Job struct {
 	Addresses          []string                   `json:"addresses,omitempty"`
@@ -92,4 +94,20 @@ type CustomAttribute struct {
 	StringValues    []string `json:"stringValues,omitempty"`
 	ForceSendFields []string `json:"-"`
 	NullFields      []string `json:"-"`
+}
+
+// JobView defines a jobView. It only contains the essential parts of a job
+type JobView struct {
+	CreatedAt *time.Time `json:"createdAt"`
+	UpdatedAt *time.Time `json:"updatedAt"`
+
+	JobID   string `json:"jobId"`   // From JobAds
+	JobName string `json:"jobName"` // From CTS
+
+	Title             string `json:"title"`
+	CompanyID         string `json:"companyId"`
+	CompanyLogo       string `json:"companyLogo"`
+	CompanyName       string `json:"companyName"`
+	PostingExpireTime string `json:"postingExpireTime"`
+	Address           string `json:"address"`
 }
