@@ -23,6 +23,11 @@ func New(token string) *Client {
 	}
 }
 
+// SetProd sets if the client should request against the prod or dev environment
+func (c *Client) SetProd(isProd bool) {
+	c.isProd = isProd
+}
+
 // GetPostingByJobAdID gets a jobad from CTS by a JobAdID
 func (c *Client) GetPostingByJobAdID(jobAdID int) (*Job, error) {
 	url := fmt.Sprintf("api/v1/posting/%d?isJobAdId=true", jobAdID)
@@ -43,6 +48,7 @@ func (c *Client) GetPostingByJobAdID(jobAdID int) (*Job, error) {
 // GetJobViewsByIDS gets JobViews from the TalentAPI based on input JobAdIds
 func (c *Client) GetJobViewsByIDS(jobAdIds []string) ([]*JobView, error) {
 	var sb strings.Builder
+	sb.WriteString("?")
 	for _, id := range jobAdIds {
 		sb.WriteString(fmt.Sprintf("id=%s&", id))
 	}
