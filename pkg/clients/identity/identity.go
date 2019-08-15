@@ -97,7 +97,7 @@ func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool
 	}
 	body, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode >= 400 {
-		fmt.Printf("lmao: %+v\n", body)
+		fmt.Printf("lmao: %+v\n", resp)
 		fmt.Printf("....: %+v\n", err)
 		return emailsQueryResult, errors.New(string(body))
 	}
