@@ -1,6 +1,7 @@
 package identity
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -53,6 +54,51 @@ func getIdentityServerURL(isProd bool) string {
 		apiURL = config.ProdIdentityServer
 	}
 	return apiURL
+}
+
+func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool) ([]EmailsQueryResult, error) {
+	emailsQueryResult := make([]EmailsQueryResult, 0)
+
+	// fmt.Println("Sending post request to http://localhost:5000/user/query")
+
+	// res, err := http.Post(&http.HTTPConfig{
+	// 	URL:     "http://localhost:5000/user/query",
+	// 	Payload: filters,
+	// 	Token:   "",
+	// })
+	// if err != nil {
+	// 	return emailsQueryResult, err
+	// }
+	// if !res.Successful() {
+	// 	return emailsQueryResult, fmt.Errorf("Query received with status code: %d", res.Status)
+	// }
+	// err = json.Unmarshal(res.Body, &emailsQueryResult)
+	filtersBytes, err := json.Marshal(filters)
+	if err != nil {
+		return emailsQueryResult, err
+	}
+
+	identityURL := getIdentityServerURL(isProd)
+	fmt.Println(accessToken)
+
+	req, err := http.NewRequest("POST", fmt.Sprint(identityURL, "/emails/query"), bytes.NewReader(filtersBytes))
+	req.Header = map[string][]string{
+		"Content-Type":   {"application/json"},
+		"Content-Length": {strconv.Itoa(len(filtersBytes))},
+		"Authorization":  {accessToken},
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return emailsQueryResult, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode >= 400 {
+		return emailsQueryResult, errors.New(string(body))
+	}
+	err = json.Unmarshal(body, &emailsQueryResult)
+
+	return emailsQueryResult, err
 }
 
 // GetAccessToken gets an access token from IdentityServer

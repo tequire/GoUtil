@@ -33,3 +33,23 @@ type ActiveUserPost struct {
 	Password       string `json:"password,omitempty"`
 	EmailReturnURL string `json:"emailReturnUrl,omitempty"`
 }
+
+// EmailsQueryFilters defines the possible filters Identity takes for an export emails query
+type EmailsQueryFilters struct {
+	NewsLetterConsent *bool
+	SchoolIDs         *[]int
+	UserIDs           *[]string
+	Nationality       *string
+	// OrderBy           string
+}
+
+// EmailsQueryResult defines output result from an export emails query
+type EmailsQueryResult struct {
+	ID                string
+	Email             string
+	PrimarySchool     *int
+	SchoolIds         []int
+	NewsLetterConsent bool
+	Nationality       string
+	Info              string
+}
