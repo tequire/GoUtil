@@ -80,6 +80,9 @@ func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool
 
 	identityURL := getIdentityServerURL(isProd)
 	fmt.Println(accessToken)
+	fmt.Println()
+	fmt.Println(fmt.Sprint(identityURL, "/emails/query"))
+	fmt.Println()
 
 	req, err := http.NewRequest("POST", fmt.Sprint(identityURL, "/emails/query"), bytes.NewReader(filtersBytes))
 	if err != nil {
