@@ -82,6 +82,9 @@ func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool
 	fmt.Println(accessToken)
 
 	req, err := http.NewRequest("POST", fmt.Sprint(identityURL, "/emails/query"), bytes.NewReader(filtersBytes))
+	if err != nil {
+		return emailsQueryResult, err
+	}
 	req.Header = map[string][]string{
 		"Content-Type":   {"application/json"},
 		"Content-Length": {strconv.Itoa(len(filtersBytes))},
