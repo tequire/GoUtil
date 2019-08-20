@@ -1,5 +1,26 @@
 package config
 
+import "fmt"
+
+type EnvironmentEnum string
+
+const (
+	LOCAL EnvironmentEnum = "localhost"
+	DEV   EnvironmentEnum = DevIdentityServer
+	PROD  EnvironmentEnum = ProdIdentityServer
+)
+
+func EnvironmentEnumFromIsProd(isProd bool) EnvironmentEnum {
+	if isProd {
+		return PROD
+	}
+	return DEV
+}
+
+func (e EnvironmentEnum) WithPort(port int) EnvironmentEnum {
+	return EnvironmentEnum(fmt.Sprint(e, ":", port))
+}
+
 // DevIdentityServer is the URL for the dev identity server
 const DevIdentityServer = "https://identity-dev.highered.global"
 

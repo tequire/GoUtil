@@ -56,7 +56,7 @@ func getIdentityServerURL(isProd bool) string {
 	return apiURL
 }
 
-func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool) ([]EmailsQueryResult, error) {
+func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, env config.EnvironmentEnum) ([]EmailsQueryResult, error) {
 	emailsQueryResult := make([]EmailsQueryResult, 0)
 
 	// fmt.Println("Sending post request to http://localhost:5000/user/query")
@@ -77,14 +77,12 @@ func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, isProd bool
 	if err != nil {
 		return emailsQueryResult, err
 	}
-
-	identityURL := getIdentityServerURL(isProd)
 	// fmt.Println(accessToken)
 	// fmt.Println()
 	// fmt.Println(fmt.Sprint(identityURL, "/user/query"))
 	// fmt.Println()
 
-	req, err := http.NewRequest("POST", fmt.Sprint(identityURL, "/user/query"), bytes.NewReader(filtersBytes))
+	req, err := http.NewRequest("POST", fmt.Sprint(env, "/user/query"), bytes.NewReader(filtersBytes))
 	if err != nil {
 		return emailsQueryResult, err
 	}
