@@ -5,7 +5,7 @@ import "fmt"
 type EnvironmentEnum string
 
 const (
-	LOCAL EnvironmentEnum = "localhost"
+	LOCAL EnvironmentEnum = "http://localhost"
 	DEV   EnvironmentEnum = DevIdentityServer
 	PROD  EnvironmentEnum = ProdIdentityServer
 )
