@@ -28,3 +28,8 @@ func AdminOrEmployeePolicy(token *oidc.IDToken) bool {
 func API1Policy(token *oidc.IDToken) bool {
 	return requireScope(token, and, "api1", "api1.full_access")
 }
+
+// GoTalentPolicy is a token policy that requires the scopes 'gotalent.full_access'
+func GoTalentPolicy(token *oidc.IDToken) bool {
+	return requireScope(token, and, "gotalent.full_access")
+}
