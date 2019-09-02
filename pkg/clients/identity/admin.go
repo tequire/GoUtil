@@ -1,6 +1,18 @@
 package identity
 
-import "encoding/json"
+// This file contains method for calls to Identity endpoints that require either
+// Admin-role or identity-scopes. (identity.full_access, identity.read_access...etc)
+
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/tequire/GoUtil/pkg/config"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+)
 
 // Client to access the IdentityServer API
 type Client struct {
@@ -86,4 +98,35 @@ func (c *Client) ChangeAuthenticationMethod(data ActiveUserPost) (*User, error) 
 		return nil, err
 	}
 	return user, nil
+}
+
+func PostEmailsQuery(filters EmailsQueryFilters, accessToken string, env config.EnvironmentEnum) ([]EmailsQueryResult, error) {
+	emailsQueryResult := make([]EmailsQueryResult, 0)
+
+	filtersBytes, err := json.Marshal(filters)
+	if err != nil {
+		return emailsQueryResult, err
+	}
+
+	req, err := http.NewRequest("POST", fmt.Sprint(env, "/user/query"), bytes.NewReader(filtersBytes))
+	if err != nil {
+		return emailsQueryResult, err
+	}
+	req.Header = map[string][]string{
+		"Content-Type":   {"application/json"},
+		"Content-Length": {strconv.Itoa(len(filtersBytes))},
+		"Authorization":  {accessToken},
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return emailsQueryResult, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode >= 400 {
+		return emailsQueryResult, errors.New(strconv.Itoa(resp.StatusCode))
+	}
+	err = json.Unmarshal(body, &emailsQueryResult)
+
+	return emailsQueryResult, err
 }

@@ -47,6 +47,8 @@ type EmailsQueryFilters struct {
 type EmailsQueryResult struct {
 	ID                string
 	Email             string
+	FirstName		  string
+	LastName 		  string
 	PrimarySchool     *int
 	SchoolIds         []int
 	NewsLetterConsent bool
