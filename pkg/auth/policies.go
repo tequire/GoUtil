@@ -33,3 +33,11 @@ func API1Policy(token *oidc.IDToken) bool {
 func GoTalentPolicy(token *oidc.IDToken) bool {
 	return requireScope(token, and, "gotalent.full_access")
 }
+
+func GoTalentReadPolicy(token *oidc.IDToken) bool {
+	return requireScope(token, or, "gotalent.full_access", "gotalent.read_access")
+}
+
+func GoTalentWritePolicy(token *oidc.IDToken) bool {
+	return requireScope(token, or, "gotalent.full_access", "gotalent.write_access")
+}
