@@ -1,2 +1,5 @@
 .vscode
 main.go
+
+# Intellij
+.idea
