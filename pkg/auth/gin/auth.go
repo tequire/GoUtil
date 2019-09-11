@@ -29,13 +29,9 @@ func IsAuthorized(policies ...auth.Policy) gin.HandlerFunc {
 
 		// Get user from token
 		user, err := tokenToUser(token)
-		if err != nil {
-			fmt.Println(err.Error())
-			ctx.Abort()
-			ctx.JSON(403, gin.H{})
-			return
+		if err == nil {
+			ctx.Set(UserInContext, user)
 		}
-		ctx.Set(UserInContext, user)
 		ctx.Set(TokenInContext, token)
 	}
 }
