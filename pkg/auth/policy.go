@@ -33,27 +33,30 @@ func requireScope(token *oidc.IDToken, op operation, scopes ...string) bool {
 		scopesMap[scope] = true
 	}
 
-	// Check required scopes
+	// Count required scopes
+	count := 0
 	for _, scope := range scopes {
-		if _, ok := scopesMap[scope]; !ok && op == and {
-			return false
-		} else if ok && op == or {
-			return true
+		if scopesMap[scope] {
+			count++
 		}
 	}
-	return true
+
+	if op == and {
+		return count == len(scopes)
+	}
+	return count >= 1 // Or
 }
 
 func requireRole(token *oidc.IDToken, op operation, roles ...string) bool {
 	// Read roles
-	readRoles := role{}
-	token.Claims(&readRoles)
+	parsedRoles := role{}
+	token.Claims(&parsedRoles)
 
 	// Put roles in map
 	roleMap := map[string]bool{}
-	if readRoles.Roles != nil && len(readRoles.Roles) > 0 {
+	if parsedRoles.Roles != nil && len(parsedRoles.Roles) > 0 {
 		// If was able to parse array, add roles into map
-		for _, role := range readRoles.Roles {
+		for _, role := range parsedRoles.Roles {
 			roleMap[role] = true
 		}
 	} else {
@@ -67,13 +70,16 @@ func requireRole(token *oidc.IDToken, op operation, roles ...string) bool {
 		}
 	}
 
-	// Check required roles
-	for _, role := range roles {
-		if _, ok := roleMap[role]; !ok && op == and {
-			return false
-		} else if ok && op == or {
-			return true
+	// Count required scopes
+	count := 0
+	for _, scope := range roles {
+		if roleMap[scope] {
+			count++
 		}
 	}
-	return true
+
+	if op == and {
+		return count == len(roles)
+	}
+	return count >= 1 // Or
 }
