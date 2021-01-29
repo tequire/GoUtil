@@ -28,10 +28,10 @@ const DevIdentityServer = "https://identity-dev.highered.global"
 const ProdIdentityServer = "https://identity.highered.global"
 
 // DevJobAdsAPI is the URL for the dev JobAdsAPI
-const DevJobAdsAPI = "https://highered-identity-jobad-dev.azurewebsites.net"
+const DevJobAdsAPI = "https://api.gethighered-dev.global"
 
 // ProdJobAdsAPI is the URL for the prod JobAdsAPI
-const ProdJobAdsAPI = "https://highered-jobadsapi-identity-prod.azurewebsites.net"
+const ProdJobAdsAPI = "https://api.gethighered.global"
 
 // DevHigheredAPI is the URL for the dev GetHighered-API
 const DevHigheredAPI = "https://api.gethighered-dev.global"
